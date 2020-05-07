@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:newjson/nested.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,12 +28,33 @@ class Jedi extends StatefulWidget {
 }
 
 class _JediState extends State<Jedi> {
+  Future<Severproducts> futureSeverproducts;
+
+  @override
+  void initState() {
+    super.initState();
+    futureSeverproducts = fetchSeverproducts();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.cyanAccent,
         ),
-        body: Container());
+        body: FutureBuilder<Severproducts>(
+          future: futureSeverproducts,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              print(snapshot.data.products);
+              return Text(snapshot.data.products.toString());
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+
+            // By default, show a loading spinner.
+            return CircularProgressIndicator();
+          },
+        ));
   }
 }
